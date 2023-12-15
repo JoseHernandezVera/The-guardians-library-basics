@@ -324,11 +324,11 @@ void runRace(const vector<int>& data, const string& raceName) {
     }
 
     // Encontrar al ganador
-    auto ganador = min_element(tiempos.begin(), tiempos.end(), [](const pair<string, double>& a, const pair<string, double>& b) {
+    auto winner = min_element(tiempos.begin(), tiempos.end(), [](const pair<string, double>& a, const pair<string, double>& b) {
         return a.second < b.second;
     });
 
-    cout << "\nEL GANADOR ES: " << ganador->first << " CON UN TIEMPO DE: " << ganador->second << " SEGUNDOS." << endl;
+    cout << "\nEL GANADOR ES: " << winner->first << " CON UN TIEMPO DE: " << winner->second << " SEGUNDOS." << endl;
 }
 
 // Función principal del programa

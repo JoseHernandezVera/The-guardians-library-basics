@@ -9,19 +9,6 @@ using namespace std;
 using namespace chrono;
 
 // Funciones para generar vectores
-vector<int> generateWithoutDuplicates(int minSize, int maxSize) {
-    random_device rd;
-    mt19937 gen(rd());
-
-    int size = uniform_int_distribution<int>(minSize, maxSize)(gen);
-
-    vector<int> arr(size);
-    iota(arr.begin(), arr.end(), 0); // Llenar con valores consecutivos
-    shuffle(arr.begin(), arr.end(), gen);
-
-    return arr;
-}
-
 vector<int> generateWithDuplicates(int minSize, int maxSize) {
     random_device rd;
     mt19937 gen(rd());
@@ -30,6 +17,19 @@ vector<int> generateWithDuplicates(int minSize, int maxSize) {
 
     vector<int> arr(size);
     generate(arr.begin(), arr.end(), [&]() { return uniform_int_distribution<int>(0, size)(gen); });
+
+    return arr;
+}
+
+vector<int> generateWithoutDuplicates(int minSize, int maxSize) {
+    random_device rd;
+    mt19937 gen(rd());
+
+    int size = uniform_int_distribution<int>(minSize, maxSize)(gen);
+
+    vector<int> arr(size);
+    iota(arr.begin(), arr.end(), 0);
+    shuffle(arr.begin(), arr.end(), gen);
 
     return arr;
 }
@@ -213,12 +213,17 @@ void heapSort(vector<int>& arr)
 // Quick Sort
 int partition(vector<int>& arr, int low, int high)
 {
+    // Elegir el pivote usando la mediana de tres
+    int mid = low + (high - low) / 2;
+    int pivotIndex = (arr[low] < arr[mid]) ? ((arr[mid] < arr[high]) ? mid : ((arr[low] < arr[high]) ? high : low)) : ((arr[low] < arr[high]) ? low : ((arr[mid] < arr[high]) ? high : mid));
+    swap(arr[pivotIndex], arr[high]);
+
     int pivot = arr[high];
     int i = low - 1;
 
-    for(int j = low; j < high; ++j)
+    for (int j = low; j < high; ++j)
     {
-        if(arr[j] < pivot)
+        if (arr[j] < pivot)
         {
             ++i;
             swap(arr[i], arr[j]);
@@ -292,74 +297,125 @@ void wrapQuickSort(vector<int>& arr) {
 
 // Funciones para carreras
 void runRace(const vector<int>& data, const string& raceName) {
-    cout << "\n\n ------ Carrera " << raceName << " ------\n\n";
+    cout << "\nCarrera " << raceName << "\n";
+    cout << "El arreglo es de " << data.size() << " elementos\n" << endl;
+
+    // Vector para almacenar los tiempos de cada algoritmo
+    vector<pair<string, double>> tiempos;
+
+    // Lista de algoritmos
     vector<pair<string, function<void(vector<int>&)>>> algorithms = {
         {"Selection Sort", selectionSort},
         {"Insertion Sort", insertionSort},
         {"Shell Sort", shellSort},
         {"Bubble Sort", bubbleSort},
-        {"Merge Sort", wrapMergeSort},  // Usar la función de envoltura
+        {"Merge Sort", wrapMergeSort},
         {"Heap Sort", heapSort},
-        {"Quick Sort", wrapQuickSort}   // Usar la función de envoltura
+        {"Quick Sort", wrapQuickSort}
+        // Puedes agregar más algoritmos si lo deseas
     };
 
+    // Ejecutar cada algoritmo y medir el tiempo
     for (const auto& algorithm : algorithms) {
         vector<int> copyData = data;
         double time = measureTime(algorithm.second, copyData);
-        cout << algorithm.first << " tomó " << time << " segundos con un arreglo de " << data.size() << " elementos" << endl;
+        tiempos.push_back({algorithm.first, time});
+        cout << algorithm.first << " se demoro " << time << " segundos" << endl;
     }
+
+    // Encontrar al ganador
+    auto ganador = min_element(tiempos.begin(), tiempos.end(), [](const pair<string, double>& a, const pair<string, double>& b) {
+        return a.second < b.second;
+    });
+
+    cout << "\nEL GANADOR ES: " << ganador->first << " CON UN TIEMPO DE: " << ganador->second << " SEGUNDOS." << endl;
 }
 
 // Función principal del programa
 int main() {
     int option;
+    
+    cout << "BIENVENIDO A THE GUARDIANS LIBRARY-BASIC\n";
 
     do {
-    	cout << "Menu de The guardians library-basics\n"
-        cout << "\n1. Carrera con arreglo sin duplicados\n";
-        cout << "2. Carrera con arreglo con duplicados\n";
-        cout << "3. Carrera con arreglo ordenado\n";
-        cout << "4. Carrera con arreglo ordenado en reversa\n";
-        cout << "5. Salir\n";
-        cout << "Seleccione una opción: ";
+    	cout << "\nMenu\n";
+        cout << "\n1. Carreras en la cola de espera\n";
+        cout << "2. Carreras de trazabilidad de objetos\n";
+        cout << "3. Carreras de eventos en cada escenario\n";
+        cout << "4. Salir\n";
+        cout << "Seleccione una opcion: ";
         cin >> option;
 
         switch (option) {
             case 1: {
+            	cout << "\nSelecionaste la opcion 1\n\n";
+            	
+            	auto withDuplicates = generateWithDuplicates(100000, 110000);
+                runRace(withDuplicates, "con arreglo con repetidos");
+            	
                 auto withoutDuplicates = generateWithoutDuplicates(100000, 110000);
                 runRace(withoutDuplicates, "con arreglo sin duplicados");
+                
+                auto sorted = generateSorted(100000, 110000);
+                runRace(sorted, "con arreglo ordenado");
+				
+                auto reverseSorted = generateReverseSorted(100000, 110000);
+                runRace(reverseSorted, "con arreglo inversamente ordenado");              
             }
             break;
             
             case 2: {
-                auto withDuplicates = generateWithDuplicates(100000, 110000);
-                runRace(withDuplicates, "con arreglo con duplicados");
+            	
+            	cout << "\nSelecionaste la opcion 2\n\n";
+            	
+            	//El rengo es de 15000 y 22500 porque agarre el valor minimo que era 1000 y el valor valor maximo 1500
+            	//y los multiplique por 15
+            	
+            	auto withDuplicates = generateWithDuplicates(15000, 22500);
+                runRace(withDuplicates, "con arreglo con repetidos");
+                
+                auto withoutDuplicates = generateWithoutDuplicates(15000, 22500);
+                runRace(withoutDuplicates, "con arreglo sin duplicados");
+                
+                auto sorted = generateSorted(15000, 22500);
+                runRace(sorted, "con arreglo ordenado");
+				
+                auto reverseSorted = generateReverseSorted(15000, 22500);
+                runRace(reverseSorted, "con arreglo inversamente ordenado");  
             }
             break;
             
             case 3: {
-                auto sorted = generateSorted(100000, 110000);
+            	
+            	cout << "\nSelecionaste la opcion 3\n\n";
+            	
+            	auto withDuplicates = generateWithDuplicates(60000, 80000);
+                runRace(withDuplicates, "con arreglo con repetidos");
+                
+                auto withoutDuplicates = generateWithoutDuplicates(60000, 80000);
+                runRace(withoutDuplicates, "con arreglo sin duplicados");
+                
+                auto sorted = generateSorted(60000, 80000);
                 runRace(sorted, "con arreglo ordenado");
+				
+                auto reverseSorted = generateReverseSorted(60000, 80000);
+                runRace(reverseSorted, "con arreglo inversamente ordenado");
             }
             break;
             
             case 4: {
-                auto reverseSorted = generateReverseSorted(100000, 110000);
-                runRace(reverseSorted, "con arreglo ordenado en reversa");
-            }
-            break;
-
-            case 5: {
-                cout << "\nCerrando el programa...";
+            	
+            	cout << "\nCerrando las carreras";
+            	
             }
             break;
 
             default: {
-                cout << "Opción inválida, por favor intente de nuevo...\n";
+                cout << "Opcion invalida, por favor intente de nuevo...\n";
             }
             break;
         }
-    } while (option != 5);
+    } while (option != 4);
 
     return 0;
 }

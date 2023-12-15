@@ -157,6 +157,8 @@ void merge(vector<int>& arr, int left, int middle, int right)
     }
 }
 
+// Implementación del algoritmo Merge Sort
+// Divide el vector en mitades y llama recursivamente a mergeSort
 void mergeSort(vector<int>& arr, int left, int right)
 {
     if (left < right)
@@ -194,6 +196,8 @@ void heapify(vector<int>& arr, int n, int i)
     }
 }
 
+// Implementación del algoritmo Heap Sort
+// Convierte el vector en un heap y lo va extrayendo
 void heapSort(vector<int>& arr)
 {
     int n = arr.size();
@@ -211,6 +215,8 @@ void heapSort(vector<int>& arr)
 }
 
 // Quick Sort
+// Función auxiliar para el Quick Sort
+// Selecciona un pivote y particiona el vector en dos
 int partition(vector<int>& arr, int low, int high)
 {
     // Elegir el pivote usando la mediana de tres
@@ -277,6 +283,7 @@ void bubbleSort(vector<int>& arr)
 }
 
 // Función para medir el tiempo de ejecución
+// Mide el tiempo que tarda un algoritmo en ordenar un vector
 template <typename Func>
 double measureTime(Func algorithm, vector<int> arr) {
     auto start = high_resolution_clock::now();
@@ -296,6 +303,7 @@ void wrapQuickSort(vector<int>& arr) {
 }
 
 // Funciones para carreras
+// Ejecuta una "carrera" de algoritmos de ordenamiento y determina al ganador
 void runRace(const vector<int>& data, const string& raceName) {
     cout << "\nCarrera " << raceName << "\n";
     cout << "El arreglo es de " << data.size() << " elementos\n" << endl;
@@ -312,7 +320,6 @@ void runRace(const vector<int>& data, const string& raceName) {
         {"Merge Sort", wrapMergeSort},
         {"Heap Sort", heapSort},
         {"Quick Sort", wrapQuickSort}
-        // Puedes agregar más algoritmos si lo deseas
     };
 
     // Ejecutar cada algoritmo y medir el tiempo
